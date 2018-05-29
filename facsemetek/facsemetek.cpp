@@ -57,6 +57,7 @@ template<typename T> T getint() {
 
 	return val*(neg?-1:1);
 }
+#define int ll
 
 struct pont {
 	int xx,yy,i;
@@ -107,7 +108,7 @@ void coolprint(pt x, pt y, pt z) {
 	else cout<<z.i<<" "<<y.i<<"\n";
 }
 
-int main() {
+main() {
 	IO;
 	int n,id;
 	
@@ -120,7 +121,7 @@ int main() {
 	}
 	
 	kiv=t[id];
-	t.erase(t.begin()+id);
+	
 	
 	bool van=false;
 	pt idd; 
@@ -133,6 +134,11 @@ int main() {
 		}
 	}
 	
+	
+	
+	
+	
+	t.erase(t.begin()+id);
 
 	vector<pt> up, down;
 	for(int j=1;j<n;++j) {
@@ -177,6 +183,9 @@ int main() {
 				ujup.pb(up[i]);
 			}
 		}
+	
+		//cerr<<sz(up)<<" "<<sz(down)<<"\n";
+		//return 0;
 		
 		for(int i=0;i<sz(down);++i) {
 			
@@ -190,20 +199,19 @@ int main() {
 			i--;
 		}
 		
-		/*
-		for(auto i:ujup) cerr<<i.xx<<" "<<i.yy<<"\n";
-		cerr<<"===============\n";
-		for(auto i:ujdown) cerr<<i.xx<<" "<<i.yy<<"\n";
-		*/
+		
+	
+		
 		int L=0, R=sz(ujdown)-1;
 		
+				
 		while(L<sz(ujup) && R>=0) {
 			if(benne({kiv, ujup[L], ujdown[R]}, uj) && !benne({kiv, ujup[L], ujdown[R]}, idd)) {
 				coolprint(kiv, ujup[L], ujdown[R]);
 				return 0;
 			}
 			
-			if(!benne({ujup[L], ujdown[R], kiv}, uj)) R--;
+			if(!benne({kiv, ujup[L], ujdown[R]}, uj)) R--;
 			else L++;
 		}
 		
