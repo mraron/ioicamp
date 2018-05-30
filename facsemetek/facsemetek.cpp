@@ -122,7 +122,6 @@ main() {
 	
 	kiv=t[id];
 	
-	
 	bool van=false;
 	pt idd; 
 	
@@ -134,20 +133,15 @@ main() {
 		}
 	}
 	
-	
-	
-	
-	
 	t.erase(t.begin()+id);
 
 	vector<pt> up, down;
 	for(int j=1;j<n;++j) {
 		pt i=t[j];
-		//cerr<<i.xx<<" "<<i.yy<<"\n"; 
+
 		if(ccw(kiv,uj, i)==-1) up.pb(i);
 		else if(ccw(kiv, uj, i)==1) down.pb(i);
 	}
-	//return 0;
 	
 	auto cmp=[&](pt& a, pt& b) -> bool {
 		if(ccw(kiv,a,b)==0) {
@@ -160,7 +154,6 @@ main() {
 	sort(all(up), cmp);
 	sort(all(down), cmp);
 	
-	
 	if(!van) {
 		if(up.empty() || down.empty()) {
 			cout<<"0 0\n";
@@ -168,7 +161,6 @@ main() {
 			if(benne({kiv, up.back(), down[0]}, uj)) {
 				coolprint(kiv, up.back(), down[0]);
 			}else cout<<"0 0\n";
-			//cout<<up.back().i<<" "<<down[0].i<<"\n";
 		}
 	}else {
 		vector<pt> ujup, ujdown;
@@ -184,9 +176,6 @@ main() {
 			}
 		}
 	
-		//cerr<<sz(up)<<" "<<sz(down)<<"\n";
-		//return 0;
-		
 		for(int i=0;i<sz(down);++i) {
 			
 			
@@ -199,12 +188,8 @@ main() {
 			i--;
 		}
 		
-		
-	
-		
 		int L=0, R=sz(ujdown)-1;
-		
-				
+					
 		while(L<sz(ujup) && R>=0) {
 			if(benne({kiv, ujup[L], ujdown[R]}, uj) && !benne({kiv, ujup[L], ujdown[R]}, idd)) {
 				coolprint(kiv, ujup[L], ujdown[R]);
