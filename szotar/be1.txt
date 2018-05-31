@@ -1,0 +1,10 @@
+5
+robot
+hobo
+hobbit
+robi
+botor
+3
+semmi
+robi
+bori
