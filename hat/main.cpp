@@ -64,20 +64,55 @@ vector<ll> primes;
 
 ll cnt[1<<6];
 
-ll dp[14][1<<6][1<<6];
+const int UNUSED=13;
+const int USEDTWICE=12;
+int dp[14][14][14][14][14][14][14];
 
-ll calc(int len, int mask1, int mask2) {
-	cerr<<len<<" "<<mask1<<" "<<mask2<<"\n";
-	if(dp[len][mask1][mask2]!=-1) return dp[len][mask1][mask2];
-	
-	ll ans=len>0;
-	for(int i=1;i<(1<<sz(primes));++i) {
-		if((mask2&i)>0) continue ;
-		ans+=cnt[i]*calc(len+1, mask1|i, mask2|(mask1&i));
-		ans%=1000000007;
+int calc(int i, int a, int b, int c, int d, int e, int f) {
+	if(dp[i][a][b][c][d][e][f]!=-1) return dp[i][a][b][c][d][e][f];
+	ll ans=1;
+	int volt[6];
+	volt[0]=a;
+	volt[1]=b;
+	volt[2]=c;
+	volt[3]=d;
+	volt[4]=e;
+	volt[5]=f;
+	for(int j=1;j<(1<<sz(primes));++j) {
+		int uj[6];
+		for(auto& k:uj) k=UNUSED;
+		
+		bool ok=true;
+		int dolog[20];
+		for(auto& k:dolog) k=0;
+		for(int k=0;k<sz(primes)&&ok;++k) {
+			if((j&(1<<k))!=0) {
+				if(volt[k]==USEDTWICE) ok=false;
+				if(volt[k]!=UNUSED) dolog[volt[k]]++;
+			}
+		}
+		int diff=0;
+		for(auto i:dolog) diff+=i>0;
+		
+		ok&=diff<2;
+		if(ok) {
+			for(int k=0;k<sz(primes);++k) {
+				if((j&(1<<k))==0) {
+					uj[k]=volt[k];
+				}else {
+					if(volt[k]==UNUSED) uj[k]=i;
+					else uj[k]=USEDTWICE;
+				}
+					
+			}
+			
+			ans+=cnt[j]*calc(i+1, uj[0], uj[1], uj[2], uj[3], uj[4], uj[5]);
+			ans%=1000000007;
+		}
 	}
-	cerr<<len<<" "<<mask1<<" "<<mask2<<" -> "<<ans<<"\n";
-	return dp[len][mask1][mask2]=ans;
+	
+	return dp[i][a][b][c][d][e][f]=ans;
+		
 }
 
 int main() {
@@ -105,8 +140,8 @@ int main() {
 		if(no) primes.pb(divs[i]);
 	}
 	
-	for(auto i:primes) cerr<<i<<" ";
-	cerr<<"primes\n";
+	//for(auto i:primes) cerr<<i<<" ";
+	//cerr<<"primes\n";
 	for(int i=1;i<sz(divs);++i) {
 		int mask=0;
 		for(int j=0;j<sz(primes);++j) {
@@ -116,16 +151,16 @@ int main() {
 		}
 		divmask.pb(mask);
 		cnt[mask]++;
-		cerr<<mask<<" "<<divs[i]<<"\n";
+		//cerr<<mask<<" "<<divs[i]<<"\n";
 	}
 	
-	for(int i=0;i<(1<<sz(primes));++i) {
+	/*for(int i=0;i<(1<<sz(primes));++i) {
 		cerr<<cnt[i]<<"cnt\n";
-	}
+	}*/
 	
 	memset(dp, -1, sizeof dp);
 	
-	cout<<calc(2,3,0)<<"\n";
+	cout<<calc(0, UNUSED, UNUSED, UNUSED, UNUSED, UNUSED, UNUSED)-1<<"\n";
 	
 	return 0;
 }

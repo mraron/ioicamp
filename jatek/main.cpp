@@ -1,3 +1,4 @@
+
 /*
 ID: noszaly1
 TASK: {TASK}
@@ -66,36 +67,52 @@ int main() {
 	vector<int> t(n);
 	for(int i=0;i<n;++i) cin>>t[i];
 	
-	vector<pair<int,int>> p(n);
-	for(int i=0;i<n;++i) {
-		p[i].xx=t[i];
-		p[i].yy=i;
-	}
 	
-	sort(all(p));
-	
-	for(int j=0;j<k;++k) {
+	for(int j=0;j<q;++j) {
 		int akt;
 		cin>>akt;
 		
-		queue<int> elso, masodik;
-		for(int i=0;i<n;++i) {
-			if(i&1) {
-				masodik.push(i);
-			}else {
-				elso.push(i);
-			}
+		vector<int> lst(n+1, 0);
+		int curr=n;
+		int sz=0;
+	
+		for(int i=0;i<akt;++i) {
+			lst[t[i]]++;
+			sz++;	
+			
 		}
 		
 		
-		for(int i=n-1;i>=0;i--) {
-			int elerheto;
-			if(p[i].yy<=akt) {
-				elerheto=0;
-			}else {
-				elerheto=p[i].yy;
+		ll ans=0;
+		int ind=0;
+		while(ind<n) {
+			if(ind>0) {
+				if(akt<n){
+					if(curr<t[akt]) {
+						ans+=(ind&1?-1:1)*t[akt];
+						ind++;
+						akt++;
+						continue ;
+					}else {
+						lst[t[akt]]++;
+						sz++;
+						akt++;
+					}
+				}
 			}
+			
+			while(lst[curr]==0) {
+				
+				curr--;
+			}
+			ans+=(ind&1?-1:1)*curr;
+			lst[curr]--;
+			sz--;
+			
+			ind++;
 		}
+		
+		cout<<ans<<"\n";
 	}
 	/*
 	priority_queue<int> pq;	
