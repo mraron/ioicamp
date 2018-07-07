@@ -1,0 +1,16 @@
+9 6
+ZG = CJG + VOC
+DHT = JDX + VRA
+DHT = AW + JDX
+DHT = PRU + O
+Z = O + GNB
+ZG = GNB + VRA
+O = PRU + AEB
+JDX = VRA + VSQ
+OFT = OID + AW
+B = ASM + B
+OFT = OFT + ASM
+B = B + N
+OFT = OFT + IN
+B = B + EUA
+OFT = OFT + GG
