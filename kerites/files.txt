@@ -1,0 +1,20 @@
+files.txt	
+	ez a fájl
+lookup.cpp
+	C++ minta könyvtári modul
+testgener
+	teszt generáló Ubuntu linux program
+lookup.h
+	header fájl
+testgener.exe
+	teszt generáló Windows program
+be1.txt
+	minta bemenet
+be1.ps 
+	a be1.txt bemenet ábrája
+ki1.txt
+	minta kimenet
+be2.txt
+	minta bemenet
+ki2.txt
+	minta kimenet
