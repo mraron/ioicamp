@@ -69,7 +69,9 @@ int n,m;
 int st[MAXN], par[MAXN];
 
 vector<int> adj[MAXN];
+vector<int> adj2[MAXN];
 vector<int> A, B;
+bool isA[MAXN];
 
 bool dfs(int x) {
 	if(x<=0) return false;
@@ -90,7 +92,10 @@ bool dfs(int x) {
 
 void dfs(int x, int t) {
 	st[x]=1;
-	if(t==0) A.pb(x);
+	if(t==0) {
+		isA[x]=true;
+		A.pb(x);
+	}
 	else B.pb(x);
 	
 	for(auto i:adj[x]) {
@@ -99,6 +104,15 @@ void dfs(int x, int t) {
 		}
 	}
 	st[x]=2;
+}
+
+void dfs2(int x) {
+	st[x]=1;
+	for(auto i:adj2[x]) {
+		if(!st[i]) {
+			dfs2(i);
+		}
+	}
 }
 
 int main() {
@@ -127,16 +141,56 @@ int main() {
 		if(!volt) break;
 	}
 	
-	vector<pair<int,int>> ans;
-	for(int i:B) {
-		if(par[i]>0) {
-			ans.pb({par[i], i});
+	for(auto i:A) {
+		for(auto j:adj[i]) {
+			if(par[i]==j) {
+				adj2[j].pb(i);
+			}else {
+				adj2[i].pb(j);
+			}
 		}
 	}
 	
+	fill(st,st+n+1,0);
+	
+	for(int i=1;i<=n;++i)  {
+		if(isA[i] && par[i]==0 && !st[i]) {
+			dfs2(i);
+		}
+	}
+	
+	vector<int> A1, A2, A3;
+	vector<int> B1, B2, B3;
+	for(int i=1;i<=n;++i) {
+		if(isA[i]) {
+			if(par[i]==0) {
+				A1.pb(i);
+			}else if(st[i]) {
+				A2.pb(i);
+			}else {
+				A3.pb(i);
+			}
+		}else {
+			if(par[i]==0) {
+				B1.pb(i);
+			}else if(st[i]) {
+				B2.pb(i);
+			}else {
+				B3.pb(i);
+			}
+		}
+	}
+	
+	vector<int> ans;
+	for(auto i:A1) ans.pb(i);
+	for(auto i:A2) ans.pb(i);
+	for(auto i:B3) ans.pb(i);
+	for(auto i:B1) ans.pb(i);
+	
 	cout<<sz(ans)<<"\n";
 	for(auto i:ans) {
-		cout<<i.xx<<" "<<i.yy<<"\n";
-	}
+		cout<<i<<" ";
+	}cout<<"\n";
+	
 	return 0;
 }

@@ -63,80 +63,73 @@ template<typename T> T getint() {
 
 //mt19937 rng(chrono::steady_clock::now().time_since_epoch().count()); uniform_int_distribution<int>(0, n-1)(rng)
 
-const int MAXN=10001;
-
-int n,m;
-int st[MAXN], par[MAXN];
-
-vector<int> adj[MAXN];
-vector<int> A, B;
-
-bool dfs(int x) {
-	if(x<=0) return false;
-	if(st[x]) return false;
-	
-	st[x]=1;
-	
-	for(auto i:adj[x]) {
-		if(par[i]<=0 || dfs(par[i])) {
-			par[i]=x;
-			par[x]=i;
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-void dfs(int x, int t) {
-	st[x]=1;
-	if(t==0) A.pb(x);
-	else B.pb(x);
-	
-	for(auto i:adj[x]) {
-		if(!st[i]) {
-			dfs(i, 1-t);
-		}
-	}
-	st[x]=2;
-}
-
 int main() {
-	cin>>n>>m;
-	for(int i=0;i<m;++i) {
-		int a,b;
-		cin>>a>>b;
-		adj[a].pb(b);
-		adj[b].pb(a);
+	IO;
+	int m,l,n;
+	cin>>m>>l>>n;
+	
+	vector<pair<int,int>> t(n);
+	vector<int> ans(n,-1);
+	set<int> unused;
+	for(int i=0;i<n;++i) {
+		cin>>t[i].xx;
+		t[i].yy=i;
+		unused.insert(t[i].yy);
 	}
 	
-	for(int i=1;i<=n;++i) {
-		if(!st[i]) {
-			dfs(i, 0);
+	sort(t.begin(), t.end());
+	
+	int res=0;
+	int last=0;
+	vector<pair<int,int>> lst; 
+	lst.pb({-100,0});
+	int used=0;
+	
+	for(auto i:t) {
+		if(i.xx>=last) {
+			last=i.xx+l;
+			res+=2;
+			used++;
+			lst.pb({i.xx, i.xx+l-1});
+			ans[i.yy]=i.xx;
+			unused.erase(i.yy);
+		}
+	}
+	lst.pb({m+1,m+100});
+
+	int poss=0;
+	vector<pair<int,int>> lst2;
+	for(int i=1;i<(int)lst.size();++i) {
+		int val=(lst[i].xx-lst[i-1].yy-1)/l;
+		poss+=val;
+		lst2.push_back({lst[i-1].yy+1, val});
+		
+	}
+	
+	for(auto& i:lst2) {
+		while(i.yy>0 && poss>0 && !unused.empty()) {
+			res++;
+			ans[*unused.begin()]=i.xx;
+			unused.erase(unused.begin());
+			i.xx+=l;
+			i.yy--;
+			poss--;
 		}
 	}
 	
-	while(1) {
-		bool volt=false;
-		fill(st,st+n+1,0);
-		for(auto i:A){
-			if(!st[i] && par[i]==0) {
-				volt|=dfs(i);
-			}
-		}
-		if(!volt) break;
+	//res+=min(poss, n-used);
+	
+	cout<<res<<"\n";
+	int valid=0;
+	for(int i=0;i<n;++i) {
+		if(ans[i]>=0) valid++;
 	}
 	
-	vector<pair<int,int>> ans;
-	for(int i:B) {
-		if(par[i]>0) {
-			ans.pb({par[i], i});
+	cout<<valid<<"\n";
+	for(int i=0;i<n;++i) {
+		if(ans[i]>=0) {
+			cout<<i+1<<" "<<ans[i]<<"\n";
 		}
-	}
-	
-	cout<<sz(ans)<<"\n";
-	for(auto i:ans) {
-		cout<<i.xx<<" "<<i.yy<<"\n";
 	}
 	return 0;
 }

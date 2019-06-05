@@ -63,80 +63,81 @@ template<typename T> T getint() {
 
 //mt19937 rng(chrono::steady_clock::now().time_since_epoch().count()); uniform_int_distribution<int>(0, n-1)(rng)
 
-const int MAXN=10001;
+int n,m,d;
+vector<pair<int,int>> lst; 
+vector<int> ans[100001];
 
-int n,m;
-int st[MAXN], par[MAXN];
-
-vector<int> adj[MAXN];
-vector<int> A, B;
-
-bool dfs(int x) {
-	if(x<=0) return false;
-	if(st[x]) return false;
-	
-	st[x]=1;
-	
-	for(auto i:adj[x]) {
-		if(par[i]<=0 || dfs(par[i])) {
-			par[i]=x;
-			par[x]=i;
+bool nemlehet(int x) {
+	int day=1, akt=0;
+	for(int i=0;i<sz(lst);++i) {
+		//cerr<<day<<" "<<akt<<"\n";
+		if(akt==x) {
+			day++;
+			akt=0;
+		}
+		
+		if(lst[i].xx>day) {
+			day=lst[i].xx;
+			akt=0;
+		}
+		
+		if(day-lst[i].xx>d) {
 			return true;
 		}
+		
+		akt++;
 	}
 	
-	return false;
+	return day>n;
 }
 
-void dfs(int x, int t) {
-	st[x]=1;
-	if(t==0) A.pb(x);
-	else B.pb(x);
-	
-	for(auto i:adj[x]) {
-		if(!st[i]) {
-			dfs(i, 1-t);
+void construct(int x) {
+	int day=1, akt=0;
+	for(int i=0;i<sz(lst);++i) {
+		if(akt==x) {
+			day++;
+			akt=0;
 		}
+		
+		if(lst[i].xx>day) {
+			day=lst[i].xx;
+			akt=0;
+		}
+		
+		assert(day<=n);
+		ans[day].pb(lst[i].yy);
+		
+		akt++;
 	}
-	st[x]=2;
-}
 
+}
+	
 int main() {
-	cin>>n>>m;
+	IO;
+	cin>>n>>d>>m;
+	lst.resize(m);
 	for(int i=0;i<m;++i) {
-		int a,b;
-		cin>>a>>b;
-		adj[a].pb(b);
-		adj[b].pb(a);
+		cin>>lst[i].xx;
+		lst[i].yy=i+1;
 	}
 	
+	sort(lst.begin(), lst.end());
+	
+	int akt=0;
+	for(int i=20;i>=0;i--) {
+		int curr=akt+(1<<i);
+		if(nemlehet(curr)) {
+			akt=curr;
+		}
+	}
+	
+	akt++;
+	cout<<akt<<"\n";
+	construct(akt);
 	for(int i=1;i<=n;++i) {
-		if(!st[i]) {
-			dfs(i, 0);
-		}
-	}
-	
-	while(1) {
-		bool volt=false;
-		fill(st,st+n+1,0);
-		for(auto i:A){
-			if(!st[i] && par[i]==0) {
-				volt|=dfs(i);
-			}
-		}
-		if(!volt) break;
-	}
-	
-	vector<pair<int,int>> ans;
-	for(int i:B) {
-		if(par[i]>0) {
-			ans.pb({par[i], i});
-		}
-	}
-	
-	cout<<sz(ans)<<"\n";
-	for(auto i:ans) {
-		cout<<i.xx<<" "<<i.yy<<"\n";
+		for(auto j:ans[i]) {
+			cout<<j<<" ";
+		}cout<<"0\n";
 	}
 	return 0;
 }

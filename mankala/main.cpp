@@ -58,85 +58,15 @@ template<typename T> T getint() {
 		val=(val*10)+c-'0';
 	} while((c=gc()) && (c>='0' && c<='9'));
 
-	return val*(neg?-1:1);
+	return val*(neg?-1:1)
 }
 
 //mt19937 rng(chrono::steady_clock::now().time_since_epoch().count()); uniform_int_distribution<int>(0, n-1)(rng)
 
-const int MAXN=10001;
-
-int n,m;
-int st[MAXN], par[MAXN];
-
-vector<int> adj[MAXN];
-vector<int> A, B;
-
-bool dfs(int x) {
-	if(x<=0) return false;
-	if(st[x]) return false;
-	
-	st[x]=1;
-	
-	for(auto i:adj[x]) {
-		if(par[i]<=0 || dfs(par[i])) {
-			par[i]=x;
-			par[x]=i;
-			return true;
-		}
-	}
-	
-	return false;
-}
-
-void dfs(int x, int t) {
-	st[x]=1;
-	if(t==0) A.pb(x);
-	else B.pb(x);
-	
-	for(auto i:adj[x]) {
-		if(!st[i]) {
-			dfs(i, 1-t);
-		}
-	}
-	st[x]=2;
-}
-
 int main() {
-	cin>>n>>m;
-	for(int i=0;i<m;++i) {
-		int a,b;
-		cin>>a>>b;
-		adj[a].pb(b);
-		adj[b].pb(a);
-	}
+	IO;
 	
-	for(int i=1;i<=n;++i) {
-		if(!st[i]) {
-			dfs(i, 0);
-		}
-	}
 	
-	while(1) {
-		bool volt=false;
-		fill(st,st+n+1,0);
-		for(auto i:A){
-			if(!st[i] && par[i]==0) {
-				volt|=dfs(i);
-			}
-		}
-		if(!volt) break;
-	}
-	
-	vector<pair<int,int>> ans;
-	for(int i:B) {
-		if(par[i]>0) {
-			ans.pb({par[i], i});
-		}
-	}
-	
-	cout<<sz(ans)<<"\n";
-	for(auto i:ans) {
-		cout<<i.xx<<" "<<i.yy<<"\n";
-	}
 	return 0;
 }
+

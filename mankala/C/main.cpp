@@ -20,6 +20,7 @@
 #include<random>
 #include<chrono>
 #include<bitset>
+#include "game.h"
 using namespace std;
 
 #define all(x) (x).begin(), (x).end()
@@ -61,82 +62,90 @@ template<typename T> T getint() {
 	return val*(neg?-1:1);
 }
 
-//mt19937 rng(chrono::steady_clock::now().time_since_epoch().count()); uniform_int_distribution<int>(0, n-1)(rng)
-
-const int MAXN=10001;
-
-int n,m;
-int st[MAXN], par[MAXN];
-
-vector<int> adj[MAXN];
-vector<int> A, B;
-
-bool dfs(int x) {
-	if(x<=0) return false;
-	if(st[x]) return false;
+struct state {
+	int t[4];
+	int p=0;
 	
-	st[x]=1;
+	state mv(int x) {
+		state uj=*this;
+		uj.t[x]=0;
+		uj.p=1-p;
+		int eloszt=t[x]-1;
+		for(int i=x+1;eloszt>0;++i) {
+			if(i%4==x) continue ;
+			uj.t[i%4]++;
+			eloszt--;
+		}
+		
+		return uj;
+	}
 	
-	for(auto i:adj[x]) {
-		if(par[i]<=0 || dfs(par[i])) {
-			par[i]=x;
-			par[x]=i;
-			return true;
+	bool veg() {
+		return (p==0 && t[0]+t[1]==0) || (p==1 && t[2]+t[3]==0);
+	}
+	
+	bool operator==(const state& masik) const {
+		return masik.t[0]==t[0] && masik.t[1]==t[1] && masik.t[2]==t[2] && masik.t[3]==t[3];
+	}
+	
+	bool operator<(const state& masik) const {
+		return t[0]<masik.t[0]||t[1]<masik.t[1]||t[2]<masik.t[2]||t[3]<masik.t[3];
+	}
+};
+
+const int NY=1;
+const int V=0;
+map<state, pair<int,int>> dp;
+
+pair<int,int> calc(state x) {
+	if(dp.count(x)) {
+		return dp[x];
+	}
+	
+	if(x.veg()) {
+		return {V,-1};
+	}
+	
+	int Vlepes=-1;
+	int lepes=-1;
+	
+	int L,R;
+	
+	if(x.p==0) L=0, R=1;
+	else L=2,R=3;
+	
+	for(int i=L;i<=R;++i) {
+		if(x.t[i]>0) {
+			lepes=i;
+			state y=x.mv(i);
+			if(calc(y).xx==V) {
+				Vlepes=i;
+			}
 		}
 	}
 	
-	return false;
+	return dp[x]={Vlepes!=-1, (Vlepes!=-1?Vlepes:lepes)};
 }
 
-void dfs(int x, int t) {
-	st[x]=1;
-	if(t==0) A.pb(x);
-	else B.pb(x);
-	
-	for(auto i:adj[x]) {
-		if(!st[i]) {
-			dfs(i, 1-t);
-		}
-	}
-	st[x]=2;
-}
 
 int main() {
-	cin>>n>>m;
-	for(int i=0;i<m;++i) {
-		int a,b;
-		cin>>a>>b;
-		adj[a].pb(b);
-		adj[b].pb(a);
-	}
-	
-	for(int i=1;i<=n;++i) {
-		if(!st[i]) {
-			dfs(i, 0);
-		}
+	state X;
+	X.p=0;
+	for(int i=0;i<4;++i) {
+		X.t[i]=Pit(i+1);
 	}
 	
 	while(1) {
-		bool volt=false;
-		fill(st,st+n+1,0);
-		for(auto i:A){
-			if(!st[i] && par[i]==0) {
-				volt|=dfs(i);
-			}
-		}
-		if(!volt) break;
+		pair<int,int> L=calc(X);
+	//	cerr<<L.xx<<" "<<L.yy<<"\n";
+		//assert(L.xx==NY);
+		cerr<<L.yy<<"\n";
+		MyMove(L.yy+1);
+		X=X.mv(L.yy);
+		int x=YourMove();
+		X=X.mv(x-1);
 	}
 	
-	vector<pair<int,int>> ans;
-	for(int i:B) {
-		if(par[i]>0) {
-			ans.pb({par[i], i});
-		}
-	}
-	
-	cout<<sz(ans)<<"\n";
-	for(auto i:ans) {
-		cout<<i.xx<<" "<<i.yy<<"\n";
-	}
 	return 0;
 }
+
